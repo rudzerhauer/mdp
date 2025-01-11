@@ -1,0 +1,8 @@
+package net.etfbl.model;
+
+public class Reservation {
+	private Integer id;
+	
+	
+	
+}

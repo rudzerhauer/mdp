@@ -1,0 +1,25 @@
+package net.etfbl.api;
+
+import javax.ws.rs.Path;
+import javax.ws.rs.core.MediaType;
+
+@Path("/reservations")
+
+public class APIServiceReservations {
+	ReservationService reservationService;
+	
+	public APIServiceReservations() {
+		reservationService = new ReservationService();
+	}
+	
+	
+	@GET
+	@Produces(MediaType.APPLICATION_JSON)
+	public ArrayList<Reservations> getAll() {
+		
+	}
+	
+	
+	
+	
+}

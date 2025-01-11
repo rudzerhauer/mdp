@@ -1,0 +1,50 @@
+package net.etfbl.api;
+
+import java.util.ArrayList;
+import java.util.Random;
+
+import net.etfbl.model.DataSource;
+import net.etfbl.model.Member;
+
+public class StudentService {
+
+	DataSource data = DataSource.getInstance();
+
+	public ArrayList<Member> getStudents() {
+		return data.students;
+	}
+
+	public Member getById(int id) {
+		for (Member s : data.students) {
+			if (s.getId() == id) {
+				return s;
+			}
+		}
+		return new Member();
+	}
+
+	public boolean add(Member student) {
+		student.setId(new Random().nextInt(100));
+		return data.students.add(student);
+	}
+
+	public boolean update(Member student, int id) {
+		int index = data.students.indexOf(new Member(id));
+		if (index >= 0) {
+			data.students.set(index, student);
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	public boolean remove(int id) {
+		int index = data.students.indexOf(new Member(id));
+		if (index >= 0) {
+			data.students.remove(index);
+			return true;
+		} else {
+			return false;
+		}
+	}
+}

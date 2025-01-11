@@ -1,0 +1,28 @@
+package net.etfbl.api;
+
+import javax.ws.rs.Path;
+import javax.ws.rs.core.MediaType;
+
+import java.awt.print.Book;
+import java.util.ArrayList;
+
+import javax.ws.rs.*;
+
+@Path("/books")
+public class APIServiceBook {
+
+	BookService bookService;
+	
+	public APIServiceBook() {
+		bookService = new BookService();
+	}
+	
+	@GET
+	@Produces(MediaType.APPLICATION_JSON) {
+		public ArrayList<Book> getAll() {
+			return bookService.getBooks();
+		}
+		
+	}
+
+}

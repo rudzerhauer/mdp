@@ -1,0 +1,37 @@
+package net.etfbl.model;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+
+public class DataSource {
+
+	public ArrayList<Member> students = new ArrayList<>();
+	private static DataSource instance = null;
+
+	public static DataSource getInstance() {
+		if (instance == null) {
+			instance = new DataSource();
+		}
+		return instance;
+	}
+
+	private DataSource() {
+		System.out.println("Init demo data");
+
+		HashMap<String, Integer> grades1 = new HashMap<>();
+		grades1.put("Programski jezici 2", 8);
+		grades1.put("MDP", 10);
+		grades1.put("Internet programiranje", 9);
+
+		HashMap<String, Integer> grades2 = new HashMap<>();
+		grades2.put("Programski jezici 2", 6);
+		grades2.put("MDP", 7);
+		grades2.put("Internet programiranje", 8);
+
+		Member s1 = new Member(1, "Marko", "Markovic", grades1);
+		Member s2 = new Member(2, "Janko", "Jankovic", grades2);
+
+		students.add(s1);
+		students.add(s2);
+	}
+}

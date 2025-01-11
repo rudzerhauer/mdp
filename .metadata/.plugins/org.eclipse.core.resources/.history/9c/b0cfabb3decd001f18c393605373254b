@@ -1,0 +1,16 @@
+package net.etfbl.api;
+
+import javax.ws.rs.Path;
+import javax.ws.rs.*;
+
+@Path("/books")
+public class APIServiceBook {
+
+	BookService bookService;
+	
+	public APIServiceBook() {
+		bookService = new BookService();
+	}
+	
+
+}

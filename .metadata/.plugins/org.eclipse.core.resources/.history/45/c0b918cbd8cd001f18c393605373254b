@@ -1,0 +1,6 @@
+package net.etfbl.model;
+
+public class Book {
+
+	private Integer id;
+}

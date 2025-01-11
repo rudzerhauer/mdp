@@ -1,0 +1,31 @@
+package net.etfbl.main;
+import javafx.scene.Scene;
+import javafx.scene.control.Menu;
+import javafx.scene.control.MenuBar;
+import javafx.scene.layout.BorderPane;
+
+public class LibraryApp {
+
+    public Scene createMainScene() {
+        // Glavni layout
+        BorderPane root = new BorderPane();
+
+        // MenuBar
+        MenuBar menuBar = new MenuBar();
+
+        // Meniji
+        Menu membersMenu = new Menu("Članovi");
+        Menu booksMenu = new Menu("Knjige");
+        Menu reservationsMenu = new Menu("Rezervacije");
+
+        // Dodavanje menija u MenuBar
+        menuBar.getMenus().addAll(membersMenu, booksMenu, reservationsMenu);
+
+        // Postavljanje MenuBar na vrh
+        root.setTop(menuBar);
+
+        // Glavna scena
+        return new Scene(root, 800, 600);
+    }
+}
+

@@ -1,0 +1,21 @@
+package net.etfbl.api;
+
+import javax.ws.rs.Path;
+
+@Path("/reservations")
+
+public class APIServiceReservations {
+	ReservationService reservationService;
+	
+	public APIServiceReservations() {
+		reservationService = new ReservationService();
+	}
+	
+	
+	@GET
+	@
+	
+	
+	
+	
+}

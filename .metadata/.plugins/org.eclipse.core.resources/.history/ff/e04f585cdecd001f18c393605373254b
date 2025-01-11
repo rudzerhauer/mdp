@@ -1,0 +1,7 @@
+package net.etfbl.api;
+@Path("/books")
+public class APIServiceBook {
+
+	
+
+}

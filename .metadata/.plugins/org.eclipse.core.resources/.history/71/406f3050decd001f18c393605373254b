@@ -1,0 +1,5 @@
+package net.etfbl.api;
+
+public class APIServiceBook {
+
+}

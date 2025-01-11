@@ -1,0 +1,62 @@
+[
+    {
+        "id": 1,
+        "member": {
+            "id": 1,
+            "firstName": "Marko",
+            "lastName": "Markovic",
+            "email": "markomarkovic@gmail.com",
+            "username": "marko_01",
+            "password": "marko123"
+        },
+        "book": {
+            "id": 1,
+            "title": "The Great Gatsby",
+            "author": "F. Scott Fitzgerald",
+            "year": 1925,
+            "available": true
+        },
+        "date": "2025-01-08",
+        "status": "Pending"
+    },
+    {
+        "id": 2,
+        "member": {
+            "id": 2,
+            "firstName": "Janko",
+            "lastName": "Jankovic",
+            "email": "jankojankovic@gmail.com",
+            "username": "janko_01",
+            "password": "janko123"
+        },
+        "book": {
+            "id": 2,
+            "title": "To Kill a Mockingbird",
+            "author": "Harper Lee",
+            "year": 1960,
+            "available": true
+        },
+        "date": "2025-01-09",
+        "status": "Confirmed"
+    },
+    {
+        "id": 3,
+        "member": {
+            "id": 3,
+            "firstName": "Ana",
+            "lastName": "Anic",
+            "email": "anaanic@gmail.com",
+            "username": "ana_01",
+            "password": "ana123"
+        },
+        "book": {
+            "id": 3,
+            "title": "1984",
+            "author": "George Orwell",
+            "year": 1949,
+            "available": true
+        },
+        "date": "2025-01-10",
+        "status": "Pending"
+    }
+]
