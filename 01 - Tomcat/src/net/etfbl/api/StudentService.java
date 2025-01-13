@@ -13,6 +13,19 @@ public class StudentService {
 	public ArrayList<Member> getStudents() {
 		return data.members;
 	}
+	public boolean exists(Member member) {
+	    System.out.println("Checking credentials for user: " + member.getUsername());
+
+	    for (Member s : data.members) {
+	        System.out.println("Checking against user: " + s.getUsername());
+	        if (s.getUsername().equals(member.getUsername()) && s.getPassword().equals(member.getPassword())) {
+	            return true;
+	        }
+	    }
+	    return false;
+	}
+
+
 
 	public Member getById(int id) {
 		for (Member s : data.members) {

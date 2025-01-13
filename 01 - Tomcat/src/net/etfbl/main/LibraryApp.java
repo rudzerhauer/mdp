@@ -1,5 +1,13 @@
 package net.etfbl.main;
+
+import java.io.IOException;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
 import java.util.Random;
+
+import com.google.gson.Gson;
 
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
@@ -8,6 +16,7 @@ import javafx.scene.control.Alert.AlertType;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
+import javafx.stage.Stage;
 import net.etfbl.api.BookService;
 import net.etfbl.api.StudentService;
 import net.etfbl.model.*;
@@ -18,221 +27,374 @@ import net.etfbl.users.UserFileHandler;
 public class LibraryApp {
 
     public Scene createMainScene() {
-        // Glavni layout
+        // Main layout
         BorderPane root = new BorderPane();
 
         // MenuBar
         MenuBar menuBar = new MenuBar();
 
-        // Meniji
+        // Menus
         Menu membersMenu = new Menu("Članovi");
         Menu booksMenu = new Menu("Knjige");
         Menu reservationsMenu = new Menu("Rezervacije");
 
-        // Dodavanje menija u MenuBar
+        // Adding menus to MenuBar
         menuBar.getMenus().addAll(membersMenu, booksMenu, reservationsMenu);
 
-        // Postavljanje MenuBar na vrh
+        // Setting MenuBar at the top
         root.setTop(menuBar);
 
-        // Glavni sadržaj (form)
+        // Main content area
         VBox content = new VBox(10);
         content.setPadding(new Insets(10));
 
-        // Form for Adding User
-        Button addUserButton = new Button("Add User");
+        // Buttons for actions
+        Button addUserButton = new Button("Dodaj Člana");
+        Button addBookButton = new Button("Dodaj Knjigu");
+        Button addReservationButton = new Button("Dodaj Rezervaciju");
+
+        // Setting button actions
         addUserButton.setOnAction(e -> showAddUserForm(content));
-
-        // Form for Adding Book
-        Button addBookButton = new Button("Add Book");
         addBookButton.setOnAction(e -> showAddBookForm(content));
-
-        // Form for Adding Reservation
-        Button addReservationButton = new Button("Add Reservation");
         addReservationButton.setOnAction(e -> showAddReservationForm(content));
 
-        // Dodavanje dugmadi u content
+        // Adding buttons to content
         content.getChildren().addAll(addUserButton, addBookButton, addReservationButton);
 
-        // Dodavanje akcija na menije
+        // Adding actions to menus
         membersMenu.setOnAction(e -> showAddUserForm(content));
         booksMenu.setOnAction(e -> showAddBookForm(content));
         reservationsMenu.setOnAction(e -> showAddReservationForm(content));
 
-        // Postavljanje sadržaja u centar
+        // Setting content in the center
         root.setCenter(content);
 
-        // Glavna scena
-        Scene scene = new Scene(root, 800, 600);
-        return scene;
+        // Main scene
+        return new Scene(root, 800, 600);
+    }
+    private TextField createTextField(String promptText) {
+        TextField textField = new TextField();
+        textField.setPromptText(promptText);
+        return textField;
     }
 
-    private void showAddUserForm(VBox content) {
-        // Create input fields for user data
-        TextField firstNameField = new TextField();
-        TextField lastNameField = new TextField();
-        TextField emailField = new TextField();
-        TextField usernameField = new TextField();
+    private PasswordField createPasswordField(String promptText) {
         PasswordField passwordField = new PasswordField();
-        
-        // Labels for input fields
-        Label firstNameLabel = new Label("First Name:");
-        Label lastNameLabel = new Label("Last Name:");
-        Label emailLabel = new Label("Email:");
-        Label usernameLabel = new Label("Username:");
-        Label passwordLabel = new Label("Password:");
+        passwordField.setPromptText(promptText);
+        return passwordField;
+    }
+    private void showAlert(String title, String message) {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle(title);
+        alert.setHeaderText(null);
+        alert.setContentText(message);
+        alert.showAndWait();
+    }
 
-        // Create Add Button
-        Button submitButton = new Button("Add User");
+
+
+    private void showAddUserForm(VBox content) {
+        content.getChildren().clear();
+
+        // Create form fields
+        TextField firstNameField = createTextField("Ime");
+        TextField lastNameField = createTextField("Prezime");
+        TextField emailField = createTextField("E-mail");
+        TextField usernameField = createTextField("Korisničko ime");
+        PasswordField passwordField = createPasswordField("Lozinka");
+
+        // Add User Button
+        Button submitButton = new Button("Dodaj Člana");
         submitButton.setOnAction(e -> {
-            int id = new Random().nextInt(100);
             String firstName = firstNameField.getText();
             String lastName = lastNameField.getText();
             String email = emailField.getText();
             String username = usernameField.getText();
             String password = passwordField.getText();
 
-            Member newUser = new Member(id, firstName, lastName, email, username, password);
+            if (firstName.isEmpty() || lastName.isEmpty() || email.isEmpty() || username.isEmpty() || password.isEmpty()) {
+                showAlert("Greška", "Sva polja moraju biti popunjena.");
+                return;
+            }
+
+            Member newUser = new Member(new Random().nextInt(100), firstName, lastName, email, username, password);
             boolean success = UserFileHandler.addUser(newUser);
 
             if (success) {
-                showAlert("Success", "User added successfully!");
+                showAlert("Uspjeh", "Član je uspješno dodan.");
             } else {
-                showAlert("Error", "Username already exists.");
+                showAlert("Greška", "Korisničko ime već postoji.");
             }
         });
 
-        // Create a GridPane for the form
-        GridPane formGrid = new GridPane();
-        formGrid.setVgap(10);
-        formGrid.setHgap(10);
-        formGrid.add(firstNameLabel, 0, 0);
-        formGrid.add(firstNameField, 1, 0);
-        formGrid.add(lastNameLabel, 0, 1);
-        formGrid.add(lastNameField, 1, 1);
-        formGrid.add(emailLabel, 0, 2);
-        formGrid.add(emailField, 1, 2);
-        formGrid.add(usernameLabel, 0, 3);
-        formGrid.add(usernameField, 1, 3);
-        formGrid.add(passwordLabel, 0, 4);
-        formGrid.add(passwordField, 1, 4);
-        formGrid.add(submitButton, 1, 5);
-
-        content.getChildren().clear(); // Clear previous content
-        content.getChildren().add(formGrid); // Show the form
+        // Display form
+        content.getChildren().add(createFormGrid(
+                new String[]{"Ime:", "Prezime:", "E-mail:", "Korisničko ime:", "Lozinka:"},
+                new Control[]{firstNameField, lastNameField, emailField, usernameField, passwordField, submitButton}
+        ));
     }
 
     private void showAddBookForm(VBox content) {
-        TextField titleField = new TextField();
-        TextField authorField = new TextField();
-        TextField yearField = new TextField();
-        CheckBox availableCheckBox = new CheckBox("Available");
+        content.getChildren().clear();
 
-        // Labels for input fields
-        Label titleLabel = new Label("Title:");
-        Label authorLabel = new Label("Author:");
-        Label yearLabel = new Label("Year:");
-        Label availableLabel = new Label("Availability:");
+        // Create form fields
+        TextField titleField = createTextField("Naslov");
+        TextField authorField = createTextField("Autor");
+        TextField yearField = createTextField("Godina");
+        CheckBox availableCheckBox = new CheckBox("Dostupno");
 
-        // Create Add Button
-        Button submitButton = new Button("Add Book");
+        // Add Book Button
+        Button submitButton = new Button("Dodaj Knjigu");
         submitButton.setOnAction(e -> {
-            int id = new Random().nextInt(100);
-            String title = titleField.getText();
-            String author = authorField.getText();
-            int year = Integer.parseInt(yearField.getText());
-            boolean available = availableCheckBox.isSelected();
+            try {
+                String title = titleField.getText();
+                String author = authorField.getText();
+                int year = Integer.parseInt(yearField.getText());
+                boolean available = availableCheckBox.isSelected();
 
-            Book newBook = new Book(id, title, author, year, available);
-            boolean success = BookFileHandler.addBook(newBook);
+                if (title.isEmpty() || author.isEmpty()) {
+                    showAlert("Greška", "Naslov i autor su obavezni.");
+                    return;
+                }
 
-            if (success) {
-                showAlert("Success", "Book added successfully!");
-            } else {
-                showAlert("Error", "Failed to add book.");
+                Book newBook = new Book(new Random().nextInt(100), title, author, year, available);
+                boolean success = BookFileHandler.addBook(newBook);
+
+                if (success) {
+                    showAlert("Uspjeh", "Knjiga je uspješno dodana.");
+                } else {
+                    showAlert("Greška", "Neuspješno dodavanje knjige.");
+                }
+            } catch (NumberFormatException ex) {
+                showAlert("Greška", "Godina mora biti broj.");
             }
         });
 
-        // Create a GridPane for the form
-        GridPane formGrid = new GridPane();
-        formGrid.setVgap(10);
-        formGrid.setHgap(10);
-        formGrid.add(titleLabel, 0, 0);
-        formGrid.add(titleField, 1, 0);
-        formGrid.add(authorLabel, 0, 1);
-        formGrid.add(authorField, 1, 1);
-        formGrid.add(yearLabel, 0, 2);
-        formGrid.add(yearField, 1, 2);
-        formGrid.add(availableLabel, 0, 3);
-        formGrid.add(availableCheckBox, 1, 3);
-        formGrid.add(submitButton, 1, 4);
-
-        content.getChildren().clear(); // Clear previous content
-        content.getChildren().add(formGrid); // Show the form
+        // Display form
+        content.getChildren().add(createFormGrid(
+                new String[]{"Naslov:", "Autor:", "Godina:", "Dostupno:"},
+                new Control[]{titleField, authorField, yearField, availableCheckBox, submitButton}
+        ));
     }
 
     private void showAddReservationForm(VBox content) {
-        TextField memberIdField = new TextField();
-        TextField bookIdField = new TextField();
-        TextField dateField = new TextField();
-        TextField statusField = new TextField();
+        content.getChildren().clear();
 
-        // Labels for input fields
-        Label memberIdLabel = new Label("Member ID:");
-        Label bookIdLabel = new Label("Book ID:");
-        Label dateLabel = new Label("Date:");
-        Label statusLabel = new Label("Status:");
+        // Create form fields
+        TextField memberIdField = createTextField("ID Člana");
+        TextField bookIdField = createTextField("ID Knjige");
+        TextField dateField = createTextField("Datum");
+        TextField statusField = createTextField("Status");
 
-        // Create Add Button
-        Button submitButton = new Button("Add Reservation");
+        // Add Reservation Button
+        Button submitButton = new Button("Dodaj Rezervaciju");
         submitButton.setOnAction(e -> {
-            int id = new Random().nextInt(100);
-            int memberId = Integer.parseInt(memberIdField.getText());
-            int bookId = Integer.parseInt(bookIdField.getText());
-            String date = dateField.getText();
-            String status = statusField.getText();
-            StudentService ss = new StudentService();
-            BookService bs = new BookService();
-            Member member = ss.getById(memberId); // Implement method to find member by ID
-            Book book = bs.getById(bookId); // Implement method to find book by ID
+            try {
+                int memberId = Integer.parseInt(memberIdField.getText());
+                int bookId = Integer.parseInt(bookIdField.getText());
+                String date = dateField.getText();
+                String status = statusField.getText();
 
-            if (member != null && book != null) {
-                Reservation newReservation = new Reservation(id, member, book, date, status);
+                StudentService ss = new StudentService();
+                BookService bs = new BookService();
+                Member member = ss.getById(memberId);
+                Book book = bs.getById(bookId);
+
+                if (member == null || book == null) {
+                    showAlert("Greška", "Neispravan ID člana ili knjige.");
+                    return;
+                }
+
+                Reservation newReservation = new Reservation(new Random().nextInt(100), member, book, date, status);
                 boolean success = ReservationFileHandler.addReservation(newReservation);
 
                 if (success) {
-                    showAlert("Success", "Reservation added successfully!");
+                    showAlert("Uspjeh", "Rezervacija je uspješno dodana.");
                 } else {
-                    showAlert("Error", "Failed to add reservation.");
+                    showAlert("Greška", "Neuspješno dodavanje rezervacije.");
                 }
-            } else {
-                showAlert("Error", "Invalid member or book ID.");
+            } catch (NumberFormatException ex) {
+                showAlert("Greška", "ID člana i knjige moraju biti brojevi.");
             }
         });
 
-        // Create a GridPane for the form
-        GridPane formGrid = new GridPane();
-        formGrid.setVgap(10);
-        formGrid.setHgap(10);
-        formGrid.add(memberIdLabel, 0, 0);
-        formGrid.add(memberIdField, 1, 0);
-        formGrid.add(bookIdLabel, 0, 1);
-        formGrid.add(bookIdField, 1, 1);
-        formGrid.add(dateLabel, 0, 2);
-        formGrid.add(dateField, 1, 2);
-        formGrid.add(statusLabel, 0, 3);
-        formGrid.add(statusField, 1, 3);
-        formGrid.add(submitButton, 1, 4);
+        // Display form
+        content.getChildren().add(createFormGrid(
+                new String[]{"ID Člana:", "ID Knjige:", "Datum:", "Status:"},
+                new Control[]{memberIdField, bookIdField, dateField, statusField, submitButton}
+        )); }
+    void showLoginForm(Stage stage) {
+        GridPane grid = new GridPane();
+        grid.setHgap(10);
+        grid.setVgap(10);
+        grid.setPadding(new Insets(10, 10, 10, 10));
 
-        content.getChildren().clear(); // Clear previous content
-        content.getChildren().add(formGrid); // Show the form
+        Label usernameLabel = new Label("Korisničko ime:");
+        TextField usernameField = new TextField();
+        Label passwordLabel = new Label("Lozinka:");
+        PasswordField passwordField = new PasswordField();
+        Button loginButton = new Button("Prijava");
+        Button registerButton = new Button("Registracija");
+
+        grid.add(usernameLabel, 0, 0);
+        grid.add(usernameField, 1, 0);
+        grid.add(passwordLabel, 0, 1);
+        grid.add(passwordField, 1, 1);
+        grid.add(loginButton, 1, 2);
+        grid.add(registerButton, 1, 3);
+
+        loginButton.setOnAction(e -> handleLogin(usernameField.getText(), passwordField.getText()));
+        registerButton.setOnAction(e -> showRegistrationForm(stage));
+
+        Scene scene = new Scene(grid, 400, 200);
+        stage.setTitle("Prijava na sistem");
+        stage.setScene(scene);
+        stage.show();
+    }
+    private void showRegistrationForm(Stage stage) {
+        GridPane grid = new GridPane();
+        grid.setHgap(10);
+        grid.setVgap(10);
+        grid.setPadding(new Insets(10, 10, 10, 10));
+
+        TextField firstNameField = new TextField();
+        TextField lastNameField = new TextField();
+        TextField addressField = new TextField();
+        TextField emailField = new TextField();
+        TextField usernameField = new TextField();
+        PasswordField passwordField = new PasswordField();
+        PasswordField confirmPasswordField = new PasswordField();
+        Button registerButton = new Button("Registruj se");
+
+        grid.add(new Label("Ime:"), 0, 0);
+        grid.add(firstNameField, 1, 0);
+        grid.add(new Label("Prezime:"), 0, 1);
+        grid.add(lastNameField, 1, 1);
+        grid.add(new Label("Email:"), 0, 3);
+        grid.add(emailField, 1, 3);
+        grid.add(new Label("Korisničko ime:"), 0, 4);
+        grid.add(usernameField, 1, 4);
+        grid.add(new Label("Lozinka:"), 0, 5);
+        grid.add(passwordField, 1, 5);
+        grid.add(new Label("Potvrda lozinke:"), 0, 6);
+        grid.add(confirmPasswordField, 1, 6);
+        grid.add(registerButton, 1, 7);
+
+        registerButton.setOnAction(e -> {
+            String firstName = firstNameField.getText();
+            String lastName = lastNameField.getText();
+            String address = addressField.getText();
+            String email = emailField.getText();
+            String username = usernameField.getText();
+            String password = passwordField.getText();
+            String confirmPassword = confirmPasswordField.getText();
+
+            if (!password.equals(confirmPassword)) {
+                showAlert("Greška", "Lozinke se ne poklapaju.");
+                return;
+            }
+
+            // REST API poziv za registraciju
+            try {
+                String url = "http://localhost:8080/api/register";
+                HttpClient client = HttpClient.newHttpClient();
+                HttpRequest request = HttpRequest.newBuilder()
+                        .uri(URI.create(url))
+                        .header("Content-Type", "application/json")
+                        .POST(HttpRequest.BodyPublishers.ofString(
+                                "{\"firstName\":\"" + firstName + "\", " +
+                                        "\"lastName\":\"" + lastName + "\", " +
+                                        "\"address\":\"" + address + "\", " +
+                                        "\"email\":\"" + email + "\", " +
+                                        "\"username\":\"" + username + "\", " +
+                                        "\"password\":\"" + password + "\"}"
+                        ))
+                        .build();
+
+                HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+
+                if (response.statusCode() == 201) {
+                    showAlert("Uspjeh", "Registracija uspješna!");
+                    showLoginForm(stage); // Vraćanje na login
+                } else {
+                    showAlert("Greška", "Registracija nije uspjela.");
+                }
+            } catch (Exception ex) {
+                showAlert("Greška", "Greška prilikom registracije: " + ex.getMessage());
+            }
+        });
+
+        Scene scene = new Scene(grid, 400, 300);
+        stage.setTitle("Registracija");
+        stage.setScene(scene);
     }
 
-    private void showAlert(String title, String message) {
-        Alert alert = new Alert(AlertType.INFORMATION);
-        alert.setTitle(title);
-        alert.setHeaderText(null);
-        alert.setContentText(message);
-        alert.showAndWait();
+
+    private void handleLogin(String username, String password) {
+        if (username.isEmpty() || password.isEmpty()) {
+            showAlert("Greška", "Unesite korisničko ime i lozinku.");
+            return;
+        }
+
+        // REST API poziv za prijavu
+        try {
+            // Make sure username and password are not empty
+            if (username == null || password == null || username.isEmpty() || password.isEmpty()) {
+                showAlert("Greška", "Korisničko ime i lozinka nisu validni.");
+                return;
+            }
+
+            // Use Gson to create JSON body
+            Gson gson = new Gson();
+            String jsonBody = gson.toJson(new Member(username, password));
+
+            // Build the HTTP request
+            String url = "http://localhost:8080/01/api/studenti/login";
+            HttpClient client = HttpClient.newHttpClient();
+            HttpRequest request = HttpRequest.newBuilder()
+                    .uri(URI.create(url))
+                    .header("Content-Type", "application/json")
+                    .POST(HttpRequest.BodyPublishers.ofString(jsonBody))
+                    .build();
+
+            // Send the request and get the response
+            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+
+            // Log the response for debugging
+            System.out.println("Response Status: " + response.statusCode());
+            System.out.println("Response Body: " + response.body());
+
+            // Check if login was successful
+            if (response.statusCode() == 200) {
+                showAlert("Uspjeh", "Prijava uspješna!");
+                // Continue with the application
+            } else {
+                showAlert("Greška", "Pogrešno korisničko ime ili lozinka.");
+            }
+
+        } catch (IOException | InterruptedException e) {
+            e.printStackTrace();
+            showAlert("Greška", "Došlo je do greške prilikom slanja zahteva.");
+        }
+
     }
+
+    
+
+    
+    private GridPane createFormGrid(String[] labels, Control[] controls) {
+        GridPane grid = new GridPane();
+        grid.setVgap(10);
+        grid.setHgap(10);
+
+        for (int i = 0; i < labels.length; i++) {
+            if (i < controls.length) { // Fix: Ensure that controls array matches labels size
+                grid.add(new Label(labels[i]), 0, i);
+                grid.add(controls[i], 1, i);
+            }
+        }
+
+        return grid; // Return the constructed GridPane
+    }
+
 }

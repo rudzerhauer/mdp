@@ -12,7 +12,7 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-
+import net.etfbl.users.*;
 import net.etfbl.model.Member;
 
 @Path("/studenti")
@@ -29,7 +29,23 @@ public class APIService {
 	public ArrayList<Member> getAll() {
 		return service.getStudents();
 	}
+	
+	@POST
+	@Path("/login")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response login(Member student) {
+	    System.out.println("Received login request: " + student.getUsername() + " / " + student.getPassword());
 
+	    if (service.exists(student)) {
+	        return Response.status(200).entity(student).build();
+	    } else {
+	        return Response.status(404).entity("User not found or invalid credentials").build();
+	    }
+	}
+
+	
+	
 	@GET
 	@Path("/{id}")
 	@Produces(MediaType.APPLICATION_JSON)

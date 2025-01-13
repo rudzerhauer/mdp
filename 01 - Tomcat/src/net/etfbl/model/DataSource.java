@@ -53,10 +53,12 @@ public class DataSource {
 
     public void addBook(Book book) {
         books.add(book);
+        BookFileHandler.saveBooks(books);
     }
 
     public void addReservation(Reservation reservation) {
         reservations.add(reservation);
+        ReservationFileHandler.saveReservations(reservations);
     }
 
     // Metoda za čuvanje svih članova pri gašenju aplikacije

@@ -2,18 +2,19 @@ package net.etfbl.main;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import net.etfbl.main.LibraryApp;
 
 public class MainApp extends Application {
 
     @Override
     public void start(Stage primaryStage) {
-        LibraryApp libraryApp = new LibraryApp();
-        primaryStage.setScene(libraryApp.createMainScene()); // Dodaje glavni GUI iz LibraryApp
-        primaryStage.setTitle("Biblioteka - Sistem");
-        primaryStage.show();
+    	LibraryApp la = new LibraryApp();
+        la.showLoginForm(primaryStage);
     }
 
-    public static void main(String[] args) {
+    
+
+	public static void main(String[] args) {
         launch(args);
     }
 }

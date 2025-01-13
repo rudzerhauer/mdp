@@ -27,6 +27,11 @@ public class Member {
 		this.email = email;
 	}
 
+	public Member(String username2, String password2) {
+		this.username = username2;
+		this.password = password2;
+	}
+
 	public Integer getId() {
 		return id;
 	}
