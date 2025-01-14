@@ -29,7 +29,29 @@ public class APIService {
 	public ArrayList<Member> getAll() {
 		return service.getStudents();
 	}
-	
+	@POST
+	@Path("/register")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response register(Member newMember) {
+	    System.out.println("Received registration request: " + newMember.getUsername());
+
+	    boolean isValid = service.registerUser(newMember);
+	    System.out.println("Validation result: " + isValid);
+
+	    boolean isAdded = false;
+	    if (isValid) {
+	        isAdded = UserFileHandler.addUser(newMember);
+	    }
+	    System.out.println("Add result: " + isAdded);
+
+	    if (isValid && isAdded) {
+	        return Response.status(201).entity(newMember).build();
+	    } else {
+	        return Response.status(500).entity("Error during registration").build();
+	    }
+	}
+
 	@POST
 	@Path("/login")
 	@Consumes(MediaType.APPLICATION_JSON)

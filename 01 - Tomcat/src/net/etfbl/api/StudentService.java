@@ -24,6 +24,22 @@ public class StudentService {
 	    }
 	    return false;
 	}
+	public boolean registerUser(Member member) {
+	    System.out.println("Trying to register user: " + member.getFirstName());
+	    for (Member m : data.members) {
+	        if (m.getUsername().equals(member.getUsername())) {
+	            System.out.println("Username already exists");
+	            return false;
+	        }
+	        if (m.getPassword().trim().equals(member.getPassword().trim())) {
+	            System.out.println("Password already exists");
+	            return false;
+	        }
+	    }
+	    System.out.println("Moze registracija");
+	    return true;
+	}
+
 
 
 

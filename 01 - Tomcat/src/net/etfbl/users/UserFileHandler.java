@@ -40,11 +40,14 @@ public class UserFileHandler {
         List<Member> users = loadUsers();
         for (Member user : users) {
             if (user.getUsername().equals(newUser.getUsername())) {
+                System.out.println("User with this username already exists: " + newUser.getUsername());
                 return false; // Korisnik sa ovim korisničkim imenom već postoji
             }
         }
         users.add(newUser);
+        System.out.println("Adding user: " + newUser.getUsername());
         saveUsers(users);
         return true;
     }
+
 }

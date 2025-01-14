@@ -296,7 +296,7 @@ public class LibraryApp {
 
             // REST API poziv za registraciju
             try {
-                String url = "http://localhost:8080/api/register";
+                String url = "http://localhost:8080/01/api/studenti/register";
                 HttpClient client = HttpClient.newHttpClient();
                 HttpRequest request = HttpRequest.newBuilder()
                         .uri(URI.create(url))
