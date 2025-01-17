@@ -2,11 +2,11 @@ package net.etfbl.model;
 
 public class Reservation {
 	private Integer id;
-	private Member member;
+	private User member;
 	private Book book;
 	private String date;
 	private String status;
-	public Reservation(int i, Member s1, Book b1, String string, String string2) {
+	public Reservation(int i, User s1, Book b1, String string, String string2) {
 		id = i;
 		member = s1;
 		book = b1;
@@ -26,10 +26,10 @@ public class Reservation {
 	public void setId(Integer id) {
 		this.id = id;
 	}
-	public Member getMember() {
+	public User getMember() {
 		return member;
 	}
-	public void setMember(Member member) {
+	public void setMember(User member) {
 		this.member = member;
 	}
 	public Book getBook() {

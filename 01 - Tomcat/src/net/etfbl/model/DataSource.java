@@ -5,7 +5,7 @@ import net.etfbl.users.*;
 
 public class DataSource {
 
-    public ArrayList<Member> members = new ArrayList<>();
+    public ArrayList<User> members = new ArrayList<>();
     public ArrayList<Book> books = new ArrayList<>();
     public ArrayList<Reservation> reservations = new ArrayList<>();
     private static DataSource instance = null;
@@ -33,7 +33,7 @@ public class DataSource {
     }
 
     // Opciono: metode za upravljanje kolekcijama
-    public ArrayList<Member> getMembers() {
+    public ArrayList<User> getMembers() {
         return members;
     }
 
@@ -45,7 +45,7 @@ public class DataSource {
         return reservations;
     }
 
-    public void addMember(Member member) {
+    public void addMember(User member) {
         members.add(member);
         // Čuvanje u fajl prilikom dodavanja
         UserFileHandler.saveUsers(members);
