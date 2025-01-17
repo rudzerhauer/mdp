@@ -1,0 +1,58 @@
+package net.etfbl.api;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
+
+import net.etfbl.model.DataSource;
+import net.etfbl.model.Book;
+
+
+public class BookService {
+
+    DataSource data = DataSource.getInstance();
+
+    public List<Book> getBooks() {
+        ObjectMapper mapper = new ObjectMapper();
+        try {
+            return mapper.readValue(new File("books.json"), new TypeReference<List<Book>>() {});
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to load books: " + e.getMessage(), e);
+        }
+    }
+}
+
+    public Book getById(int id) {
+        for (Book b : data.books) {
+            if (b.getId() == id) {
+                return b;
+            }
+        }
+        return new Book();
+    }
+
+    public boolean add(Book book) {
+        book.setId(new Random().nextInt(100));
+        return data.books.add(book);
+    }
+
+    public boolean update(Book book, int id) {
+        int index = data.books.indexOf(new Book(id));
+        if (index >= 0) {
+            data.books.set(index, book);
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public boolean remove(int id) {
+        int index = data.books.indexOf(new Book(id));
+        if (index >= 0) {
+            data.books.remove(index);
+            return true;
+        } else {
+            return false;
+        }
+    }
+}

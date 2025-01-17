@@ -1,0 +1,136 @@
+import javafx.application.Application;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.geometry.Insets;
+import javafx.scene.Scene;
+import javafx.scene.control.*;
+import javafx.scene.layout.*;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
+
+public class OpenUserWindow extends Application {
+
+    @Override
+    public void start(Stage primaryStage) {
+        // Main layout
+        BorderPane mainLayout = new BorderPane();
+        mainLayout.setPadding(new Insets(10));
+
+        // TableView setup
+        TableView<Book> bookTable = new TableView<>();
+        bookTable.setItems(getBookData());
+
+        TableColumn<Book, String> titleColumn = new TableColumn<>("Title");
+        titleColumn.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().getTitle()));
+
+        TableColumn<Book, String> authorColumn = new TableColumn<>("Author");
+        authorColumn.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().getAuthor()));
+
+        TableColumn<Book, String> detailsColumn = new TableColumn<>("Details");
+        detailsColumn.setCellFactory(param -> new TableCell<>() {
+            private final Button detailsButton = new Button("Details");
+
+            @Override
+            protected void updateItem(String item, boolean empty) {
+                super.updateItem(item, empty);
+                if (empty) {
+                    setGraphic(null);
+                } else {
+                    setGraphic(detailsButton);
+                    detailsButton.setOnAction(e -> showDetailsPopup(getTableView().getItems().get(getIndex())));
+                }
+            }
+        });
+
+        bookTable.getColumns().addAll(titleColumn, authorColumn, detailsColumn);
+
+        // Buttons
+        Button downloadButton = new Button("Download Selected Books");
+        downloadButton.setOnAction(e -> downloadSelectedBooks(bookTable.getSelectionModel().getSelectedItems()));
+
+        HBox buttonBox = new HBox(10, downloadButton);
+        buttonBox.setPadding(new Insets(10));
+
+        // Layout setup
+        mainLayout.setCenter(bookTable);
+        mainLayout.setBottom(buttonBox);
+
+        // Scene setup
+        Scene scene = new Scene(mainLayout, 800, 600);
+        primaryStage.setTitle("User Dashboard");
+        primaryStage.setScene(scene);
+        primaryStage.show();
+    }
+
+    private ObservableList<Book> getBookData() {
+        // Replace with actual data fetching logic
+        return FXCollections.observableArrayList(
+            new Book("Book 1", "Author 1"),
+            new Book("Book 2", "Author 2"),
+            new Book("Book 3", "Author 3")
+        );
+    }
+
+    private void showDetailsPopup(Book book) {
+        Stage detailsStage = new Stage();
+        detailsStage.initModality(Modality.APPLICATION_MODAL);
+
+        VBox layout = new VBox(10);
+        layout.setPadding(new Insets(10));
+
+        Label titleLabel = new Label("Title: " + book.getTitle());
+        Label authorLabel = new Label("Author: " + book.getAuthor());
+        TextArea previewText = new TextArea("Preview of the first 100 lines..."); // Replace with actual preview logic
+        previewText.setEditable(false);
+
+        layout.getChildren().addAll(titleLabel, authorLabel, previewText);
+
+        Scene scene = new Scene(layout, 400, 300);
+        detailsStage.setTitle("Book Details");
+        detailsStage.setScene(scene);
+        detailsStage.show();
+    }
+
+    private void downloadSelectedBooks(ObservableList<Book> selectedBooks) {
+        if (selectedBooks.isEmpty()) {
+            showAlert("No Books Selected", "Please select at least one book to download.");
+            return;
+        }
+        for (Book book : selectedBooks) {
+            System.out.println("Downloading: " + book.getTitle()); // Replace with actual download logic
+        }
+        showAlert("Success", "Selected books downloaded successfully.");
+    }
+
+    private void showAlert(String title, String message) {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle(title);
+        alert.setHeaderText(null);
+        alert.setContentText(message);
+        alert.showAndWait();
+    }
+
+    public static void main(String[] args) {
+        launch(args);
+    }
+
+    // Mock Book class
+    public static class Book {
+        private final String title;
+        private final String author;
+
+        public Book(String title, String author) {
+            this.title = title;
+            this.author = author;
+        }
+
+        public String getTitle() {
+            return title;
+        }
+
+        public String getAuthor() {
+            return author;
+        }
+    }
+}

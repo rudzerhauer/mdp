@@ -24,7 +24,7 @@ public class BookService {
     }
 
     public boolean add(Book book) {
-        book.setId(new Random().nextInt(100));
+        
         return data.books.add(book);
     }
 
