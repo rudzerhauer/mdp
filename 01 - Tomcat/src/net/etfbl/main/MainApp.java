@@ -21,6 +21,8 @@ public class MainApp extends Application {
     
 
 	public static void main(String[] args) {
+		String baseDirectory = System.getProperty("user.dir");
+		System.out.println(baseDirectory);
 		Service service = new Service();
 		List<User> lista = new ArrayList<>();
 		lista = UserFileHandler.loadUsers();

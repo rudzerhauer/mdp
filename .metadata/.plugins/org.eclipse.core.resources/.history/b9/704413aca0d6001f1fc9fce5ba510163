@@ -1,0 +1,25 @@
+package net.etfbl.users;
+
+import java.io.*;
+import java.nio.file.*;
+import java.util.zip.*;
+
+public class ZipUtils {
+
+    // Method to create a zip file from a list of file paths
+    public static void createZipFile(String zipFilePath, String[] filePaths) {
+        try (ZipOutputStream zos = new ZipOutputStream(new FileOutputStream(zipFilePath))) {
+            for (String filePath : filePaths) {
+                File file = new File(filePath);
+                if (file.exists() && file.isFile()) {
+                    addToZipFile(file, zos);
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    // Helper method to add a file to the zip
+    
+}

@@ -97,6 +97,11 @@ public class Book {
         }
         return contentBuilder.toString();
     }
+    
+    public String getContent() {
+    	String content = this.loadContent();
+    	return content;
+    }
 
     // Method to return the first 100 lines of the book's content
     public String getPreview() {

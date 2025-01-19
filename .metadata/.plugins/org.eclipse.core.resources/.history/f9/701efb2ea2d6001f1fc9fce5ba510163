@@ -1,0 +1,130 @@
+package net.etfbl.api;
+
+import org.apache.commons.mail.Email;
+import org.apache.commons.mail.EmailAttachment;
+import org.apache.commons.mail.EmailException;
+import org.apache.commons.mail.HtmlEmail;
+
+import net.etfbl.model.Book;
+
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
+
+public class EmailService {
+	
+	private File createZip(List<String> filePaths) throws IOException {
+	    // Choose a valid location to save the zip file, e.g., user's home directory
+	    String userHome = System.getProperty("user.home"); // Get the user's home directory
+	    File tempZipFile = new File(userHome, "books.zip"); // Save zip file in the home directory
+	    
+	    // Check if any files are given
+	    if (filePaths.isEmpty()) {
+	        System.out.println("No files to zip.");
+	        return tempZipFile;
+	    }
+
+	    // Ensure the ZIP file is created
+	    try (ZipOutputStream zos = new ZipOutputStream(new FileOutputStream(tempZipFile))) {
+	        byte[] buffer = new byte[1024]; // Buffer to read files and write to the zip
+	        boolean filesAdded = false; // To track if any files were added
+
+	        for (String filePath : filePaths) {
+	            File file = new File(filePath);
+	            if (file.exists() && file.isFile()) { // Ensure the file exists and is a regular file
+	                filesAdded = true; // At least one file was found
+
+	                System.out.println("Adding file to zip: " + file.getAbsolutePath());
+
+	                try (FileInputStream fis = new FileInputStream(file)) {
+	                    // Create a new zip entry for each file
+	                    ZipEntry zipEntry = new ZipEntry(file.getName());
+	                    zos.putNextEntry(zipEntry);
+
+	                    // Read the file and write it to the zip output stream
+	                    int length;
+	                    while ((length = fis.read(buffer)) > 0) {
+	                        zos.write(buffer, 0, length);
+	                    }
+	                    zos.closeEntry(); // Close the entry after writing the file
+	                }
+	            } else {
+	                System.out.println("File not found or is not a valid file: " + filePath);
+	            }
+	        }
+
+	        if (!filesAdded) {
+	            System.out.println("No valid files were added to the zip.");
+	        }
+	    }
+
+	    return tempZipFile;
+	}
+
+
+
+    // Updated method to accept email details and an attachment
+	 public boolean sendEmailWithAttachment(String recipient, String subject, String body, List<String> filePaths) {
+		    try {
+		        // Set system properties for SSL connection (if necessary)
+		        System.setProperty("javax.net.ssl.trustStore", "D:\\Program Files\\Java\\jdk-18.0.2.1\\lib\\security\\cacerts");
+		        System.setProperty("javax.net.ssl.trustStorePassword", "changeit");
+		        System.setProperty("mail.smtp.starttls.enable", "true");
+		        System.setProperty("mail.smtp.ssl.protocols", "TLSv1.2");
+
+		        // Create the email object
+		        Email email = new HtmlEmail();
+		        email.setHostName("smtp.gmail.com");
+		        email.setSmtpPort(587);
+		        email.setAuthentication("nikola.gataric01@gmail.com", "vqic uakv mhqr dvfw");
+		        email.setStartTLSEnabled(true);
+		        email.setFrom("nikola.gataric01@gmail.com");
+		        email.addTo(recipient);
+		        email.setSubject(subject);
+		        email.setMsg(body);
+
+		        // Create the ZIP file from the list of file paths
+		        File zipFile = createZip(filePaths);
+
+		        // Check and attach the ZIP file
+		        if (zipFile != null && zipFile.exists()) {
+		            System.out.println("Attaching file: " + zipFile.getAbsolutePath());
+
+		            // Create the email attachment
+		            EmailAttachment emailAttachment = new EmailAttachment();
+		            emailAttachment.setPath(zipFile.getAbsolutePath());
+		            emailAttachment.setDisposition(EmailAttachment.ATTACHMENT);
+		            emailAttachment.setDescription("Books ZIP File");
+		            emailAttachment.setName(zipFile.getName());
+
+		            // Attach the file to the email
+		            ((HtmlEmail) email).attach(emailAttachment);  // Directly call attach on HtmlEmail
+
+		            // Optional: Print attachment details for debugging
+		            System.out.println("Attachment details:");
+		            System.out.println("Description: " + emailAttachment.getDescription());
+		            System.out.println("Name: " + emailAttachment.getName());
+		            System.out.println("Path: " + emailAttachment.getPath());
+		        } else {
+		            System.out.println("Attachment file is either null or doesn't exist.");
+		        }
+
+		        // Send the email
+		        email.send();
+		        System.out.println("Email sent successfully.");
+		        return true;
+		    } catch (EmailException | IOException e) {
+		        // Improved error handling
+		        e.printStackTrace();
+		        System.out.println("Error sending email: " + e.getMessage());
+		        return false;
+		    }
+		}
+
+}

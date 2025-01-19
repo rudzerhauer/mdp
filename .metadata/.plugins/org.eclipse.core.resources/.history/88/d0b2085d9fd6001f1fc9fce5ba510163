@@ -1,0 +1,79 @@
+package net.etfbl.api;
+
+import org.apache.commons.mail.Email;
+import org.apache.commons.mail.EmailAttachment;
+import org.apache.commons.mail.EmailException;
+import org.apache.commons.mail.HtmlEmail;
+
+import net.etfbl.model.Book;
+import net.etfbl.users.ZipUtils;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
+
+public class EmailService {
+	
+	 private File createZip(List<String> filePaths) {
+	        File tempZipFile = new File("books.zip");
+	        ZipUtils.createZipFile(tempZipFile.getAbsolutePath(), filePaths.toArray(new String[0]));
+	        return tempZipFile;
+	    }
+
+
+    // Updated method to accept email details and an attachment
+    public boolean sendEmailWithAttachment(String recipient, String subject, String body, List<String> filePaths) {
+        try {
+            // Set system properties for SSL connection (if necessary)
+            System.setProperty("javax.net.ssl.trustStore", "D:\\Program Files\\Java\\jdk-18.0.2.1\\lib\\security\\cacerts");
+            System.setProperty("javax.net.ssl.trustStorePassword", "changeit");
+            System.setProperty("mail.smtp.starttls.enable", "true");
+            System.setProperty("mail.smtp.ssl.protocols", "TLSv1.2");
+
+            // Create the email object
+            Email email = new HtmlEmail();
+            email.setHostName("smtp.gmail.com");
+            email.setSmtpPort(587);
+            email.setAuthentication("nikola.gataric01@gmail.com", "vqic uakv mhqr dvfw");
+            email.setStartTLSEnabled(true);
+            email.setFrom("nikola.gataric01@gmail.com");
+            email.addTo(recipient);
+            email.setSubject(subject);
+            email.setMsg(body);
+            
+
+            // Check and attach the ZIP file
+            if (attachment != null && attachment.exists()) {
+                System.out.println("Attaching file: " + attachment.getAbsolutePath());
+
+                // Create the email attachment
+                EmailAttachment emailAttachment = new EmailAttachment();
+                emailAttachment.setPath(attachment.getAbsolutePath());
+                emailAttachment.setDisposition(EmailAttachment.ATTACHMENT);
+                emailAttachment.setDescription("File attachment");
+                emailAttachment.setName(attachment.getName());
+
+                // Attach the file to the email
+                ((HtmlEmail) email).attach(emailAttachment);  // Directly call attach on HtmlEmail
+
+                // Optional: Print attachment details for debugging
+                System.out.println("Attachment details:");
+                System.out.println("Description: " + emailAttachment.getDescription());
+                System.out.println("Name: " + emailAttachment.getName());
+                System.out.println("Path: " + emailAttachment.getPath());
+            } else {
+                System.out.println("Attachment file is either null or doesn't exist.");
+            }
+
+            // Send the email
+            email.send();
+            System.out.println("Email sent successfully.");
+            return true;
+        } catch (EmailException e) {
+            // Improved error handling
+            e.printStackTrace();
+            System.out.println("Error sending email: " + e.getMessage());
+            return false;
+        }
+    }
+}

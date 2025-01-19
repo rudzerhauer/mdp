@@ -2,7 +2,8 @@ package net.etfbl.api;
 
 import net.etfbl.model.EmailRequest;
 
-
+import java.io.File;
+import java.util.List;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
@@ -25,8 +26,13 @@ public class APIServiceEmail {
             return Response.status(Response.Status.BAD_REQUEST)
                     .entity("Missing required email parameters.").build();
         }
-
-        boolean success = emailService.sendEmail(emailRequest.getRecipient(), emailRequest.getSubject(), emailRequest.getBody());
+        try {
+        boolean success = emailService.sendEmailWithAttachment(
+                emailRequest.getRecipient(),
+                emailRequest.getSubject(),
+                emailRequest.getBody(),
+                emailRequest.getFilePaths()
+        );
 
         if (success) {
             return Response.status(Response.Status.OK)
@@ -34,6 +40,11 @@ public class APIServiceEmail {
         } else {
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
                     .entity("Failed to send email.").build();
+        }
+        }catch (Exception e) {
+            e.printStackTrace();
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                    .entity("Failed to send email: " + e.getMessage()).build();
         }
     }
 }

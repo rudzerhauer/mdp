@@ -1,9 +1,12 @@
 package net.etfbl.model;
 
+import java.util.List;
+
 public class EmailRequest {
     private String recipient;
     private String subject;
     private String body;
+    private List<String> filePaths;
 
     // Getters and setters
     public String getRecipient() {
@@ -12,6 +15,12 @@ public class EmailRequest {
 
     public void setRecipient(String recipient) {
         this.recipient = recipient;
+    }
+    public void setFilePaths(List<String> filePaths) {
+    	this.filePaths = filePaths;
+    }
+    public List<String> getFilePaths() {
+    	return this.filePaths;
     }
 
     public String getSubject() {

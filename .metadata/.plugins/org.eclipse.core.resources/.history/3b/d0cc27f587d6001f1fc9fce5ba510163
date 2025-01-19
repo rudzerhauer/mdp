@@ -1,0 +1,58 @@
+package net.etfbl.api;
+
+import net.etfbl.model.EmailRequest;
+
+import javax.mail.*;
+import javax.mail.internet.*;
+import java.io.File;
+import java.util.Properties;
+
+public class EmailService {
+
+    public boolean sendEmailWithAttachment(EmailRequest emailRequest, File zipFile) {
+        String recipient = emailRequest.getRecipient();
+        String subject = emailRequest.getSubject();
+        String body = emailRequest.getBody();
+
+        // Set up the mail server properties
+        Properties properties = System.getProperties();
+        properties.setProperty("mail.smtp.host", "smtp.example.com"); // SMTP server
+        properties.setProperty("mail.smtp.port", "587");
+
+        // Set up the session
+        Session session = Session.getDefaultInstance(properties);
+
+        try {
+            // Create a default MimeMessage object
+            MimeMessage message = new MimeMessage(session);
+
+            // Set the From, To, Subject
+            message.setFrom(new InternetAddress("your-email@example.com"));
+            message.addRecipient(Message.RecipientType.TO, new InternetAddress(recipient));
+            message.setSubject(subject);
+
+            // Create the email body part
+            MimeBodyPart bodyPart = new MimeBodyPart();
+            bodyPart.setText(body);
+
+            // Create the attachment part
+            MimeBodyPart attachmentPart = new MimeBodyPart();
+            attachmentPart.attachFile(zipFile);
+
+            // Combine body and attachment
+            Multipart multipart = new MimeMultipart();
+            multipart.addBodyPart(bodyPart);
+            multipart.addBodyPart(attachmentPart);
+
+            // Set the content of the message
+            message.setContent(multipart);
+
+            // Send the email
+            Transport.send(message);
+            return true;
+        } catch (MessagingException | java.io.IOException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+}
