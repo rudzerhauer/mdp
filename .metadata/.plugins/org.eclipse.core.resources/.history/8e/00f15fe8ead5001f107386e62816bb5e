@@ -1,0 +1,46 @@
+package net.etfbl.api;
+
+
+import jakarta.mail.*;
+import jakarta.mail.internet.*;
+import java.util.Properties;
+
+public class EmailService {
+    private static final String SENDER_EMAIL = "your-email@example.com";
+    private static final String SENDER_PASSWORD = "your-email-password";
+
+    public boolean sendEmail(String recipient, String subject, String body) {
+        String host = "smtp.gmail.com"; // Update if you're using another SMTP server
+
+        // Setting up the email properties
+        Properties props = new Properties();
+        props.put("mail.smtp.auth", "true");
+        props.put("mail.smtp.starttls.enable", "true");
+        props.put("mail.smtp.host", host);
+        props.put("mail.smtp.port", "587");
+
+        // Get the session with authentication
+        Session session = Session.getInstance(props, new Authenticator() {
+            @Override
+            protected PasswordAuthentication getPasswordAuthentication() {
+                return new PasswordAuthentication(SENDER_EMAIL, SENDER_PASSWORD);
+            }
+        });
+
+        try {
+            // Compose the message
+            MimeMessage message = new MimeMessage(session);
+            message.setFrom(new InternetAddress(SENDER_EMAIL));
+            message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(recipient));
+            message.setSubject(subject);
+            message.setText(body);
+
+            // Send the email
+            Transport.send(message);
+            return true;
+        } catch (MessagingException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+}

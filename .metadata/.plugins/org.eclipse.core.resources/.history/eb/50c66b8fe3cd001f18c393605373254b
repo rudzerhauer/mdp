@@ -1,8 +1,0 @@
-package net.etfbl.api;
-import java.util.*;
-
-import net.etfbl.model.DataSource;
-
-public class ReservationService {
-	DataSource data = DataSource.getInstance();
-}

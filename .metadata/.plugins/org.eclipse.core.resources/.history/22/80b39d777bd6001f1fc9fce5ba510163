@@ -1,0 +1,30 @@
+package net.etfbl.api;
+import org.apache.commons.mail.Email;
+import org.apache.commons.mail.EmailException;
+import org.apache.commons.mail.HtmlEmail;
+
+public class EmailService {
+    public boolean sendEmail(String recipient, String subject, String body) {
+        // Create an instance of HtmlEmail (a subclass of Email)
+        Email email = new HtmlEmail();
+        try {
+            // Set up the email parameters
+            email.setHostName("smtp.mail.yahoo.com"); // SMTP server
+            email.setSmtpPort(587); // SMTP port for Gmail
+            email.setAuthentication("nikola.gataric01@gmail.com", "Rutgerh@uer10"); // Email and password for authentication
+            email.setStartTLSEnabled(true); // Enable TLS
+            email.setFrom("nikola.gataric01@gmail.com"); // Sender email address
+            email.addTo(recipient); // Recipient's email address
+            email.setSubject(subject); // Subject of the email
+            email.setMsg(body); // Body content of the email
+
+            // Send the email
+            email.send();
+            System.out.println("Email sent successfully.");
+            return true;
+        } catch (EmailException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+}

@@ -1,0 +1,25 @@
+package net.etfl.api;
+import org.apache.commons.mail.Email;
+import org.apache.commons.mail.EmailException;
+import org.apache.commons.mail.HtmlEmail;
+
+public class EmailService {
+    public static void main(String[] args) {
+        Email email = new HtmlEmail();
+        try {
+            email.setHostName("smtp.gmail.com");
+            email.setSmtpPort(587);
+            email.setAuthentication("your-email@gmail.com", "your-email-password");
+            email.setStartTLSEnabled(true);
+            email.setFrom("your-email@gmail.com");
+            email.addTo("recipient-email@example.com");
+            email.setSubject("Test Subject");
+            email.setMsg("This is a test email.");
+
+            email.send();
+            System.out.println("Email sent successfully.");
+        } catch (EmailException e) {
+            e.printStackTrace();
+        }
+    }
+}
