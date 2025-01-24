@@ -89,3 +89,16 @@
 127.0.0.1 - - [19/Jan/2025:21:25:29 +0100] "GET / HTTP/1.1" 404 751
 127.0.0.1 - - [19/Jan/2025:21:25:51 +0100] "POST /01/api/studenti/login HTTP/1.1" 200 151
 127.0.0.1 - - [19/Jan/2025:21:26:19 +0100] "POST /01/api/email/send HTTP/1.1" 200 53
+127.0.0.1 - - [19/Jan/2025:21:28:20 +0100] "GET / HTTP/1.1" 404 751
+0:0:0:0:0:0:0:1 - - [19/Jan/2025:21:28:22 +0100] "GET /01/WEB-INF/classes/net/etfbl/main/MainApp.java HTTP/1.1" 404 682
+127.0.0.1 - - [19/Jan/2025:21:28:49 +0100] "POST /01/api/studenti/login HTTP/1.1" 200 151
+127.0.0.1 - - [19/Jan/2025:21:29:13 +0100] "POST /01/api/email/send HTTP/1.1" 200 53
+127.0.0.1 - - [19/Jan/2025:21:33:14 +0100] "POST /01/api/studenti/login HTTP/1.1" 200 151
+127.0.0.1 - - [19/Jan/2025:21:33:37 +0100] "POST /01/api/email/send HTTP/1.1" 200 53
+127.0.0.1 - - [19/Jan/2025:21:33:51 +0100] "POST /01/api/studenti/login HTTP/1.1" 200 151
+127.0.0.1 - - [19/Jan/2025:21:34:13 +0100] "POST /01/api/email/send HTTP/1.1" 200 53
+127.0.0.1 - - [19/Jan/2025:21:35:53 +0100] "POST /01/api/email/send HTTP/1.1" 200 53
+127.0.0.1 - - [19/Jan/2025:21:36:00 +0100] "POST /01/api/studenti/login HTTP/1.1" 200 151
+127.0.0.1 - - [19/Jan/2025:21:36:23 +0100] "POST /01/api/email/send HTTP/1.1" 200 53
+127.0.0.1 - - [19/Jan/2025:21:38:14 +0100] "POST /01/api/studenti/login HTTP/1.1" 200 151
+127.0.0.1 - - [19/Jan/2025:21:39:39 +0100] "POST /01/api/email/send HTTP/1.1" 500 21

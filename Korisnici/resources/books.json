@@ -1,0 +1,42 @@
+[
+  {
+    "id": 1,
+    "title": "Effective Java",
+    "author": "Joshua Bloch",
+    "year": 2018,
+    "available": true,
+    "filePath": "books/effective_java.doc"
+  },
+  {
+    "id": 2,
+    "title": "Clean Code",
+    "author": "Robert C. Martin",
+    "year": 2008,
+    "available": true,
+    "filePath": "books/clean_code.txt"
+  },
+  {
+    "id": 3,
+    "title": "Design Patterns",
+    "author": "Erich Gamma, Richard Helm, Ralph Johnson, John Vlissides",
+    "year": 1994,
+    "available": false,
+    "filePath": "books/design_patterns.txt"
+  },
+  {
+    "id": 4,
+    "title": "Refactoring",
+    "author": "Martin Fowler",
+    "year": 1999,
+    "available": true,
+    "filePath": "books/refactoring.txt"
+  },
+  {
+    "id": 5,
+    "title": "Introduction to Algorithms",
+    "author": "Thomas H. Cormen, Charles E. Leiserson, Ronald L. Rivest, Clifford Stein",
+    "year": 2009,
+    "available": false,
+    "filePath": "books/intro_to_algorithms.txt"
+  }
+]
